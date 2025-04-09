@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("SmartEvent")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+6aa602ca0fdb9b9cd734ec71e30ad5dde595341b")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+d029f0d4abb2defad885c7219941b8d3e5edfcbd")]
 [assembly: System.Reflection.AssemblyProductAttribute("SmartEvent")]
 [assembly: System.Reflection.AssemblyTitleAttribute("SmartEvent")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

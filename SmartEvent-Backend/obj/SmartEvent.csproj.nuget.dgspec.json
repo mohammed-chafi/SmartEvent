@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "/Users/Apple/Desktop/4-IIR/Etude de cas/SmartEvent/SmartEvent.csproj": {}
+    "/Users/Apple/Desktop/4-IIR/Etude de cas/SmartEvent/SmartEvent-Backend/SmartEvent.csproj": {}
   },
   "projects": {
-    "/Users/Apple/Desktop/4-IIR/Etude de cas/SmartEvent/SmartEvent.csproj": {
+    "/Users/Apple/Desktop/4-IIR/Etude de cas/SmartEvent/SmartEvent-Backend/SmartEvent.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Users/Apple/Desktop/4-IIR/Etude de cas/SmartEvent/SmartEvent.csproj",
+        "projectUniqueName": "/Users/Apple/Desktop/4-IIR/Etude de cas/SmartEvent/SmartEvent-Backend/SmartEvent.csproj",
         "projectName": "SmartEvent",
-        "projectPath": "/Users/Apple/Desktop/4-IIR/Etude de cas/SmartEvent/SmartEvent.csproj",
+        "projectPath": "/Users/Apple/Desktop/4-IIR/Etude de cas/SmartEvent/SmartEvent-Backend/SmartEvent.csproj",
         "packagesPath": "/Users/Apple/.nuget/packages/",
-        "outputPath": "/Users/Apple/Desktop/4-IIR/Etude de cas/SmartEvent/obj/",
+        "outputPath": "/Users/Apple/Desktop/4-IIR/Etude de cas/SmartEvent/SmartEvent-Backend/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "/Users/Apple/.nuget/NuGet/NuGet.Config"
