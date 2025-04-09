@@ -3456,11 +3456,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/Users/Apple/Desktop/4-IIR/Etude de cas/SmartEvent/SmartEvent-Backend/SmartEvent.csproj",
+      "projectUniqueName": "/Users/Apple/Desktop/4-IIR/Etude de cas/SmartEvent/SmartEvent.csproj",
       "projectName": "SmartEvent",
-      "projectPath": "/Users/Apple/Desktop/4-IIR/Etude de cas/SmartEvent/SmartEvent-Backend/SmartEvent.csproj",
+      "projectPath": "/Users/Apple/Desktop/4-IIR/Etude de cas/SmartEvent/SmartEvent.csproj",
       "packagesPath": "/Users/Apple/.nuget/packages/",
-      "outputPath": "/Users/Apple/Desktop/4-IIR/Etude de cas/SmartEvent/SmartEvent-Backend/obj/",
+      "outputPath": "/Users/Apple/Desktop/4-IIR/Etude de cas/SmartEvent/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "/Users/Apple/.nuget/NuGet/NuGet.Config"

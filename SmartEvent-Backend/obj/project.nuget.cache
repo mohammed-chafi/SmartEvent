@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "Kf4ZhBZPpCk=",
+  "dgSpecHash": "YnHzV86tYQY=",
   "success": true,
-  "projectFilePath": "/Users/Apple/Desktop/4-IIR/Etude de cas/SmartEvent/SmartEvent-Backend/SmartEvent.csproj",
+  "projectFilePath": "/Users/Apple/Desktop/4-IIR/Etude de cas/SmartEvent/SmartEvent.csproj",
   "expectedPackageFiles": [
     "/Users/Apple/.nuget/packages/humanizer.core/2.14.1/humanizer.core.2.14.1.nupkg.sha512",
     "/Users/Apple/.nuget/packages/microsoft.aspnetcore.authentication.jwtbearer/9.0.3/microsoft.aspnetcore.authentication.jwtbearer.9.0.3.nupkg.sha512",
