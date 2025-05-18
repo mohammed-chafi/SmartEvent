@@ -5,6 +5,7 @@ namespace SmartEvent.Core.Models
         public Guid Id { get; set; }
         public Guid UserId { get; set; }
         public Guid EventId { get; set; }
+        public DateTime createdAt { get; set; } = DateTime.UtcNow;
 
     }
 }

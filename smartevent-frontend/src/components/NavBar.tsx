@@ -1,7 +1,20 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 
 export default function NavBar() {
+  const [authType, setAuthType] = useState<"non" | "user" | "org">("non");
+
+  useEffect(() => {
+    const token = localStorage.getItem("authToken");
+    if (token) {
+      setAuthType("user");
+    }
+    const orgToken = localStorage.getItem("orgToken");
+    if (orgToken) {
+      setAuthType("org");
+    }
+  }, []);
+
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
 
@@ -72,20 +85,48 @@ export default function NavBar() {
           </div>
 
           {/* Auth Buttons - Desktop */}
-          <div className="hidden md:flex items-center space-x-4">
-            <Link
-              to="/login"
-              className="text-sm font-medium text-gray-600 hover:text-blue-600 transition-colors duration-200"
-            >
-              Log in
-            </Link>
-            <Link
-              to="/signup"
-              className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-xl text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200"
-            >
-              Sign up
-            </Link>
-          </div>
+          {authType === "non" ? (
+            <div className="hidden md:flex items-center space-x-4">
+              <Link
+                to="/login"
+                className="text-sm font-medium text-gray-600 hover:text-blue-600 transition-colors duration-200"
+              >
+                Log in
+              </Link>
+              <Link
+                to="/signup"
+                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-xl text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200"
+              >
+                Sign up
+              </Link>
+            </div>
+          ) : authType === "user" ? (
+            <div className="hidden md:flex items-center space-x-4">
+              <Link
+                to="/my-events"
+                className={`text-sm font-medium transition-colors duration-200 ${
+                  isActive("/my-events")
+                    ? "text-blue-600 border-b-2 border-blue-600"
+                    : "text-gray-600 hover:text-blue-600"
+                }`}
+              >
+                My events
+              </Link>
+            </div>
+          ) : (
+            <div className="hidden md:flex items-center space-x-4">
+              <Link
+                to="/dashboard"
+                className={`text-sm font-medium transition-colors duration-200 ${
+                  isActive("/dashboard")
+                    ? "text-blue-600 border-b-2 border-blue-600"
+                    : "text-gray-600 hover:text-blue-600"
+                }`}
+              >
+                Dashboard
+              </Link>
+            </div>
+          )}
 
           {/* Mobile menu button */}
           <div className="md:hidden flex items-center">

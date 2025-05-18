@@ -1,55 +1,36 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-
-interface Event {
-  id: number;
-  title: string;
-  description: string;
-  date: string;
-  time: string;
-  location: string;
-  category: string;
-  imageUrl: string;
-  capacity: number;
-  price: number;
-}
+import { Event } from "../../Interfaces/Event";
+import axios from "axios";
 
 export default function EventEdit() {
   const navigate = useNavigate();
   const { eventId } = useParams();
-  const [formData, setFormData] = useState<Event>({
-    id: 0,
-    title: "",
-    description: "",
-    date: "",
-    time: "",
-    location: "",
-    category: "",
-    imageUrl: "",
-    capacity: 0,
-    price: 0,
-  });
+  const [formData, setFormData] = useState<Event>(Object);
+  const [time, setTime] = useState<string>("");
 
   useEffect(() => {
-    const sampleEvent: Event = {
-      id: Number(eventId),
-      title: "Tech Conference 2024",
-      description:
-        "Annual technology conference featuring the latest innovations",
-      date: "2024-06-15",
-      time: "09:00",
-      location: "Convention Center, New York",
-      category: "conference",
-      imageUrl: "https://images.unsplash.com/photo-1505373877841-8d25f7d46678",
-      capacity: 500,
-      price: 99.99,
-    };
-    setFormData(sampleEvent);
+    axios
+      .get("http://localhost:5040/api/event/" + eventId)
+      .then((response) => {
+        setFormData(response.data);
+        setTime(response.data.startDate.slice(11, 16));
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   }, [eventId]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Here you would typically send the updated data to your backend
+    const token = localStorage.getItem("orgToken");
+    formData.startDate = formData.startDate.slice(0, 10) + "T" + time + ":00Z";
+    console.log(formData);
+    await axios.put("http://localhost:5040/api/event/" + eventId, formData, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
     console.log("Event updated:", formData);
     navigate("/dashboard/events");
   };
@@ -64,6 +45,7 @@ export default function EventEdit() {
       ...prev,
       [name]: value,
     }));
+    if (name == "time") setTime(value);
   };
 
   return (
@@ -103,49 +85,23 @@ export default function EventEdit() {
             <h2 className="text-lg font-semibold text-gray-900 mb-4">
               Basic Information
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <label
-                  htmlFor="title"
-                  className="block text-sm font-medium text-gray-700 mb-1"
-                >
-                  Event Title
-                </label>
-                <input
-                  type="text"
-                  id="title"
-                  name="title"
-                  value={formData.title}
-                  onChange={handleChange}
-                  required
-                  className="block w-full px-4 py-3 text-gray-900 placeholder-gray-400 bg-white border border-gray-200 rounded-xl shadow-sm transition-all duration-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent hover:border-gray-300"
-                  placeholder="Enter event title"
-                />
-              </div>
-
-              <div>
-                <label
-                  htmlFor="category"
-                  className="block text-sm font-medium text-gray-700 mb-1"
-                >
-                  Category
-                </label>
-                <select
-                  id="category"
-                  name="category"
-                  value={formData.category}
-                  onChange={handleChange}
-                  required
-                  className="block w-full px-4 py-3 text-gray-900 bg-white border border-gray-200 rounded-xl shadow-sm transition-all duration-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent hover:border-gray-300 appearance-none bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNNiA5TDEyIDE1TDE4IDkiIHN0cm9rZT0iI2QxRDVGMSIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz48L3N2Zz4=')] bg-no-repeat bg-[right_1rem_center]"
-                >
-                  <option value="">Select a category</option>
-                  <option value="conference">Conference</option>
-                  <option value="workshop">Workshop</option>
-                  <option value="networking">Networking</option>
-                  <option value="seminar">Seminar</option>
-                  <option value="exhibition">Exhibition</option>
-                </select>
-              </div>
+            <div>
+              <label
+                htmlFor="title"
+                className="block text-sm font-medium text-gray-700 mb-1"
+              >
+                Event Title
+              </label>
+              <input
+                type="text"
+                id="title"
+                name="title"
+                value={formData.title}
+                onChange={handleChange}
+                required
+                className="block w-full px-4 py-3 text-gray-900 placeholder-gray-400 bg-white border border-gray-200 rounded-xl shadow-sm transition-all duration-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent hover:border-gray-300"
+                placeholder="Enter event title"
+              />
             </div>
 
             <div className="mt-6">
@@ -183,9 +139,11 @@ export default function EventEdit() {
                 </label>
                 <input
                   type="date"
-                  id="date"
-                  name="date"
-                  value={formData.date}
+                  id="startDate"
+                  name="startDate"
+                  value={
+                    formData.startDate ? formData.startDate.slice(0, 10) : ""
+                  }
                   onChange={handleChange}
                   required
                   className="block w-full px-4 py-3 text-gray-900 placeholder-gray-400 bg-white border border-gray-200 rounded-xl shadow-sm transition-all duration-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent hover:border-gray-300"
@@ -202,7 +160,7 @@ export default function EventEdit() {
                   type="time"
                   id="time"
                   name="time"
-                  value={formData.time}
+                  value={time}
                   onChange={handleChange}
                   required
                   className="block w-full px-4 py-3 text-gray-900 placeholder-gray-400 bg-white border border-gray-200 rounded-xl shadow-sm transition-all duration-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent hover:border-gray-300"
@@ -234,7 +192,7 @@ export default function EventEdit() {
             <h2 className="text-lg font-semibold text-gray-900 mb-4">
               Event Details
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label
                   htmlFor="imageUrl"
@@ -270,26 +228,6 @@ export default function EventEdit() {
                   min="1"
                   className="block w-full px-4 py-3 text-gray-900 placeholder-gray-400 bg-white border border-gray-200 rounded-xl shadow-sm transition-all duration-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent hover:border-gray-300"
                   placeholder="Enter maximum attendees"
-                />
-              </div>
-              <div>
-                <label
-                  htmlFor="price"
-                  className="block text-sm font-medium text-gray-700 mb-1"
-                >
-                  Price ($)
-                </label>
-                <input
-                  type="number"
-                  id="price"
-                  name="price"
-                  value={formData.price}
-                  onChange={handleChange}
-                  required
-                  min="0"
-                  step="0.01"
-                  className="block w-full px-4 py-3 text-gray-900 placeholder-gray-400 bg-white border border-gray-200 rounded-xl shadow-sm transition-all duration-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent hover:border-gray-300"
-                  placeholder="Enter ticket price"
                 />
               </div>
             </div>

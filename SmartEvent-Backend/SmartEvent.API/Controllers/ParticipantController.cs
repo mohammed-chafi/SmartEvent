@@ -18,19 +18,58 @@ namespace SmartEvent.Controllers
             _participantService = participantService;
         }
 
-        [Authorize]
+        [Authorize(Roles = "user")]
         [HttpPost]
-        public async Task<ActionResult<Participant>> JoinEvent(ParticipantModel participantModel)
+        public async Task<ActionResult> JoinEvent(ParticipantModel participantModel)
         {
-            var participant = new Participant
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var claims = HttpContext.User.Claims;
+            var UserId = claims.FirstOrDefault(c => c.Type == "uid")?.Value;
+
+            var result = await _participantService.CreateParticipantAsync(participantModel, UserId);
+
+            return Ok(result);
+        }
+
+        [Authorize]
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Participant>> GetParticipantById(Guid id)
+        {
+
+            var eventObj = await _participantService.GetParticipantByIdAsync(id);
+            if (eventObj == null)
             {
-                EventId = Guid.Parse(participantModel.EventId),
-                UserId = Guid.Parse(participantModel.UserId)
-            };
+                return NotFound();
+            }
+            return Ok(eventObj);
+        }
 
-            var createdParticipant = await _participantService.CreateParticipantAsync(participant);
+        [Authorize]
+        [HttpGet("allByUserId")]
+        public async Task<ActionResult<List<Participant>>> GetAllParticipantByUserId()
+        {
+            var claims = HttpContext.User.Claims;
+            var UserId = claims.FirstOrDefault(c => c.Type == "uid")?.Value;
+            var eventObj = await _participantService.GetAllParticipantByUserIdAsync(Guid.Parse(UserId));
+            if (eventObj == null)
+            {
+                return NotFound();
+            }
+            return Ok(eventObj);
+        }
 
-            return Ok(createdParticipant);
+        [Authorize]
+        [HttpGet("allByEventId/{id}")]
+        public async Task<ActionResult<List<Participant>>> GetAllParticipantByEventId(Guid id)
+        {
+            var eventObj = await _participantService.GetAllParticipantByEventIdAsync(id);
+            if (eventObj == null)
+            {
+                return NotFound();
+            }
+            return Ok(eventObj);
         }
 
         [Authorize]

@@ -1,10 +1,9 @@
 namespace SmartEvent.Core.Models
 {
-    public class User
+    public class Organisation
     {
         public Guid Id { get; set; }
-        public string? FirstName { get; set; }
-        public string? LastName { get; set; }
+        public string Nom { get; set; }
         public Guid AuthId { get; set; }
     }
 }

@@ -3,7 +3,6 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Footer from "./components/Footer";
 import NavBar from "./components/NavBar";
 import Home from "./pages/Home";
-import EventsList from "./pages/Events";
 import About from "./pages/About";
 import DashboardLayout from "./pages/dashboard/DashboardLayout";
 import DashboardEventsList from "./pages/dashboard/EventsList";

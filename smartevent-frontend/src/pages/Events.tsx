@@ -1,85 +1,44 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
 import EventList from "../components/EventList";
 import { Event } from "../Interfaces/Event";
+import axios from "axios";
 
 export default function Events() {
   const [searchTerm, setSearchTerm] = useState("");
   const [dateFilter, setDateFilter] = useState("");
+  const [events, setEvents] = useState<Event[]>([]);
+  const [filteredEvents, setfilteredEvents] = useState<Event[]>([]);
 
   // Sample events data
-  const events: Event[] = [
-    {
-      id: 1,
-      title: "Tech Conference 2024",
-      description:
-        "Annual technology conference featuring the latest innovations",
-      date: "2024-06-15",
-      location: "Convention Center, New York",
-      imageUrl:
-        "https://images.unsplash.com/photo-1505373877841-8d25f7d46678?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
-      category: "conference",
-      longDescription: "",
-      time: "",
-      price: 0,
-      capacity: 0,
-      registered: 0,
-      organizer: {
-        name: "",
-        email: "",
-      },
-    },
-    {
-      id: 2,
-      title: "Startup Networking Event",
-      description: "Connect with entrepreneurs and investors",
-      date: "2024-05-20",
-      location: "Innovation Hub, San Francisco",
-      imageUrl:
-        "https://images.unsplash.com/photo-1522071820081-009f0129c71c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
-      category: "networking",
-      longDescription: "",
-      time: "",
-      price: 0,
-      capacity: 0,
-      registered: 0,
-      organizer: {
-        name: "",
-        email: "",
-      },
-    },
-    {
-      id: 3,
-      title: "Digital Marketing Workshop",
-      description: "Learn the latest digital marketing strategies",
-      date: "2024-07-10",
-      location: "Business Center, Chicago",
-      imageUrl:
-        "https://images.unsplash.com/photo-1511578314322-379afb476865?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
-      category: "workshop",
-      longDescription: "",
-      time: "",
-      price: 0,
-      capacity: 0,
-      registered: 0,
-      organizer: {
-        name: "",
-        email: "",
-      },
-    },
-  ];
+
+  useEffect(() => {
+    axios
+      .get("http://localhost:5040/api/event")
+      .then((response) => {
+        setEvents(response.data);
+        setfilteredEvents(response.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, []);
+
+  useEffect(() => {
+    setfilteredEvents(
+      events.filter((event) => {
+        const matchesSearch =
+          event.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          event.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          event.location.toLowerCase().includes(searchTerm.toLowerCase());
+
+        const matchesDate = !dateFilter || event.date === dateFilter;
+
+        return matchesSearch && matchesDate;
+      })
+    );
+  }, [dateFilter, searchTerm]);
 
   // Filter events based on search term and date
-  const filteredEvents = events.filter((event) => {
-    const matchesSearch =
-      event.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      event.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      event.location.toLowerCase().includes(searchTerm.toLowerCase());
-
-    const matchesDate = !dateFilter || event.date === dateFilter;
-
-    return matchesSearch && matchesDate;
-  });
 
   return (
     <div className="min-h-screen bg-gray-50 pt-32 pb-12">
@@ -181,7 +140,7 @@ export default function Events() {
         </div>
 
         {/* Events Grid */}
-        <EventList events={events} />
+        <EventList events={filteredEvents} />
 
         {/* No Results Message */}
         {filteredEvents.length === 0 && (

@@ -9,7 +9,8 @@ namespace SmartEvent.Data.Db
 
         public DbSet<Event> Events { get; set; }
         public DbSet<Participant> Participants { get; set; }
-
+        public DbSet<User> Users { get; set; }
+        public DbSet<Organisation> Organisations { get; set; }
 
     }
 }

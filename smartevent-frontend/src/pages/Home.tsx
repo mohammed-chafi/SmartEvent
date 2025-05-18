@@ -1,68 +1,22 @@
 import { Link } from "react-router-dom";
 import EventList from "../components/EventList";
 import { Event } from "../Interfaces/Event";
+import { useEffect, useState } from "react";
+import axios from "axios";
 
 export default function Home() {
-  const sampleEvents: Event[] = [
-    {
-      id: 1,
-      title: "Tech Conference 2024",
-      description:
-        "Annual technology conference featuring the latest innovations",
-      date: "2024-06-15",
-      location: "Convention Center, New York",
-      imageUrl:
-        "https://images.unsplash.com/photo-1505373877841-8d25f7d46678?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
-      longDescription: "",
-      time: "",
-      category: "",
-      price: 0,
-      capacity: 0,
-      registered: 0,
-      organizer: {
-        name: "",
-        email: "",
-      },
-    },
-    {
-      id: 2,
-      title: "Startup Networking Event",
-      description: "Connect with entrepreneurs and investors",
-      date: "2024-05-20",
-      location: "Innovation Hub, San Francisco",
-      imageUrl:
-        "https://images.unsplash.com/photo-1522071820081-009f0129c71c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
-      longDescription: "",
-      time: "",
-      category: "",
-      price: 0,
-      capacity: 0,
-      registered: 0,
-      organizer: {
-        name: "",
-        email: "",
-      },
-    },
-    {
-      id: 3,
-      title: "Digital Marketing Workshop",
-      description: "Learn the latest digital marketing strategies",
-      date: "2024-07-10",
-      location: "Business Center, Chicago",
-      imageUrl:
-        "https://images.unsplash.com/photo-1511578314322-379afb476865?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
-      longDescription: "",
-      time: "",
-      category: "",
-      price: 0,
-      capacity: 0,
-      registered: 0,
-      organizer: {
-        name: "",
-        email: "",
-      },
-    },
-  ];
+  const [events, setEvents] = useState<Event[]>([]);
+
+  useEffect(() => {
+    axios
+      .get("http://localhost:5040/api/event")
+      .then((response) => {
+        setEvents(response.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, []);
 
   return (
     <div className="min-h-screen bg-white">
@@ -89,12 +43,6 @@ export default function Home() {
             </p>
             <div className="flex justify-center space-x-4">
               <Link
-                to="/create"
-                className="bg-white text-blue-600 px-8 py-3 rounded-full text-lg font-medium hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200"
-              >
-                Create Event
-              </Link>
-              <Link
                 to="/events"
                 className="bg-transparent text-white px-8 py-3 rounded-full text-lg font-medium border-2 border-white hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white transition-all duration-200"
               >
@@ -116,7 +64,7 @@ export default function Home() {
             to miss
           </p>
         </div>
-        <EventList events={sampleEvents} />
+        <EventList events={events.slice(0, 6)} />
       </section>
 
       {/* Features Section */}
@@ -203,27 +151,6 @@ export default function Home() {
                 attendee engagement.
               </p>
             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="py-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="bg-gradient-to-r from-blue-600 to-blue-800 rounded-3xl p-12 text-center">
-            <h2 className="text-3xl font-bold text-white mb-6">
-              Ready to Create Your Next Event?
-            </h2>
-            <p className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
-              Join thousands of event organizers who trust SmartEvent to make
-              their events successful.
-            </p>
-            <Link
-              to="/create"
-              className="bg-white text-blue-600 px-8 py-3 rounded-full text-lg font-medium hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white transition-all duration-200"
-            >
-              Get Started Now
-            </Link>
           </div>
         </div>
       </section>

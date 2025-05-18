@@ -1,6 +1,14 @@
-import { Link, useLocation, Outlet } from "react-router-dom";
+import { useEffect } from "react";
+import { Link, useLocation, Outlet, useNavigate } from "react-router-dom";
 
 export default function DashboardLayout() {
+  const navigate = useNavigate();
+  useEffect(() => {
+    const token = localStorage.getItem("orgToken");
+    if (!token) {
+      navigate("/login");
+    }
+  }, [navigate]);
   const location = useLocation();
 
   const isActive = (path: string) => {

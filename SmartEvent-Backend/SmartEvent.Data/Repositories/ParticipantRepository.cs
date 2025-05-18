@@ -15,12 +15,11 @@ namespace SmartEvent.Data.Repositories
         }
 
 
-        public async Task<Participant> CreateParticipantAsync(Participant newParticipant)
+        public async Task<Participant> CreateParticipantAsync(Participant participant)
         {
-            newParticipant.Id = new Guid();
-            await _context.Participants.AddAsync(newParticipant);
+            await _context.Participants.AddAsync(participant);
             await _context.SaveChangesAsync();
-            return newParticipant;
+            return participant;
         }
 
         public async Task<bool> DeleteParticipant(Guid id)
@@ -44,12 +43,18 @@ namespace SmartEvent.Data.Repositories
 
         public async Task<List<Participant>> GetAllParticipantByUserIdAsync(Guid UserId)
         {
+            Console.WriteLine(UserId);
             return await _context.Participants.Where(e => e.UserId == UserId).ToListAsync();
         }
 
         public async Task<Participant?> GetParticipantByIdAsync(Guid id)
         {
             return await _context.Participants.FirstOrDefaultAsync(p => p.Id == id);
+        }
+
+        public async Task<Participant?> GetParticipantByUserIdAsync(Guid id)
+        {
+            return await _context.Participants.FirstOrDefaultAsync(p => p.UserId == id);
         }
 
         public async Task<Participant?> UpdateParticipantAsync(Guid id, Participant updatedParticipant)

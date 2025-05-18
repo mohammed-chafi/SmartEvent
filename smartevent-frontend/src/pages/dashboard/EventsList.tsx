@@ -1,64 +1,48 @@
-import { useState } from "react";
+import axios from "axios";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-
-interface Event {
-  id: number;
-  title: string;
-  description: string;
-  date: string;
-  location: string;
-  imageUrl: string;
-  category: string;
-  subscribers: number;
-}
+import { Event } from "../../Interfaces/Event";
 
 export default function DashboardEventsList() {
   const [searchTerm, setSearchTerm] = useState("");
   const [dateFilter, setDateFilter] = useState("");
-  const [showDeleteConfirm, setShowDeleteConfirm] = useState<number | null>(
+  const [events, setEvents] = useState<Event[]>([]);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState<string | null>(
     null
   );
 
-  // Sample events data
-  const [events, setEvents] = useState<Event[]>([
-    {
-      id: 1,
-      title: "Tech Conference 2024",
-      description:
-        "Annual technology conference featuring the latest innovations",
-      date: "2024-06-15",
-      location: "Convention Center, New York",
-      imageUrl:
-        "https://images.unsplash.com/photo-1505373877841-8d25f7d46678?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
-      category: "conference",
-      subscribers: 120,
-    },
-    {
-      id: 2,
-      title: "Startup Networking Event",
-      description: "Connect with entrepreneurs and investors",
-      date: "2024-05-20",
-      location: "Innovation Hub, San Francisco",
-      imageUrl:
-        "https://images.unsplash.com/photo-1522071820081-009f0129c71c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
-      category: "networking",
-      subscribers: 85,
-    },
-    {
-      id: 3,
-      title: "Digital Marketing Workshop",
-      description: "Learn the latest digital marketing strategies",
-      date: "2024-07-10",
-      location: "Business Center, Chicago",
-      imageUrl:
-        "https://images.unsplash.com/photo-1511578314322-379afb476865?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
-      category: "workshop",
-      subscribers: 45,
-    },
-  ]);
+  useEffect(() => {
+    const token = localStorage.getItem("orgToken");
+    axios
+      .get("http://localhost:5040/api/event/organisationEvents", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then((response) => {
+        setEvents(response.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, []);
 
-  const handleDelete = (eventId: number) => {
-    setEvents(events.filter((event) => event.id !== eventId));
+  // Sample events data
+
+  const handleDelete = (eventId: string) => {
+    const token = localStorage.getItem("orgToken");
+    axios
+      .delete("http://localhost:5040/api/event/" + eventId, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then((response) => {
+        console.log(response.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
     setShowDeleteConfirm(null);
   };
 
@@ -69,13 +53,13 @@ export default function DashboardEventsList() {
       event.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
       event.location.toLowerCase().includes(searchTerm.toLowerCase());
 
-    const matchesDate = !dateFilter || event.date === dateFilter;
+    const matchesDate = !dateFilter || event.startDate === dateFilter;
 
     return matchesSearch && matchesDate;
   });
 
   return (
-    <div className="bg-white rounded-2xl shadow-sm p-8">
+    <div className="bg-white rounded-2xl shadow-sm p-8 mb-10">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
         <h1 className="text-2xl font-bold text-gray-900 mb-4 md:mb-0">
           Manage Events
@@ -192,20 +176,17 @@ export default function DashboardEventsList() {
                       <div className="text-sm font-medium text-gray-900">
                         {event.title}
                       </div>
-                      <div className="text-sm text-gray-500">
-                        {event.category}
-                      </div>
                     </div>
                   </div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="text-sm text-gray-900">
-                    {new Date(event.date).toLocaleDateString()}
+                    {new Date(event.startDate).toLocaleDateString()}
                   </div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="text-sm text-gray-900">
-                    {event.subscribers}
+                    {event.capacity - event.availablePlace}
                   </div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-4">

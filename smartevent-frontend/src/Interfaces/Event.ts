@@ -1,18 +1,13 @@
 export interface Event {
-  id: number;
+  id: string;
   title: string;
   description: string;
-  longDescription: string;
-  date: string;
+
+  startDate: string;
   time: string;
   location: string;
   imageUrl: string;
-  category: string;
-  price: number;
   capacity: number;
-  registered: number;
-  organizer: {
-    name: string;
-    email: string;
-  };
+  availablePlace: number;
+  organisationName: string;
 }

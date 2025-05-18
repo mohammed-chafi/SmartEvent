@@ -1,23 +1,72 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import axios from "axios";
+import { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { UserRequest } from "../../Interfaces/User";
+import { OrganisationRequest } from "../../Interfaces/Organisation";
 
 export default function Register() {
   const [userType, setUserType] = useState<"subscriber" | "publisher">(
     "subscriber"
   );
+
+  const navigate = useNavigate();
+  useEffect(() => {
+    const token = localStorage.getItem("authToken");
+    if (token) {
+      navigate("/");
+    }
+    const orgToken = localStorage.getItem("orgToken");
+    if (orgToken) {
+      navigate("/dashboard");
+    }
+  }, [navigate]);
+
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
     email: "",
     password: "",
-    confirmPassword: "",
-    organization: "",
-    phone: "",
+    nom: "",
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Registration attempt:", { userType, ...formData });
+    try {
+      if (userType === "subscriber") {
+        let user: UserRequest = {
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+          email: formData.email,
+          password: formData.password,
+        };
+        const res = await axios.post(
+          "http://localhost:5040/api/auth/register/user",
+          user
+        );
+
+        const token = res.data.token;
+
+        localStorage.setItem("authToken", token);
+        navigate("/");
+      } else if (userType === "publisher") {
+        let organization: OrganisationRequest = {
+          nom: formData.nom,
+          email: formData.email,
+          password: formData.password,
+        };
+        //console.log(organization);
+        const res = await axios.post(
+          "http://localhost:5040/api/auth/register/organisation",
+          organization
+        );
+        const token = res.data.token;
+
+        localStorage.setItem("orgToken", token);
+        navigate("/dashboard");
+      }
+    } catch (error) {
+      console.error("Submission error:", error);
+    }
   };
 
   return (
@@ -69,53 +118,86 @@ export default function Register() {
 
           <form className="space-y-6" onSubmit={handleSubmit}>
             <div className="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-2">
-              <div>
-                <label
-                  htmlFor="firstName"
-                  className="block text-sm font-medium text-gray-700"
-                >
-                  First name
-                </label>
-                <div className="mt-1">
-                  <input
-                    id="firstName"
-                    name="firstName"
-                    type="text"
-                    autoComplete="given-name"
-                    required
-                    value={formData.firstName}
-                    onChange={(e) =>
-                      setFormData({ ...formData, firstName: e.target.value })
-                    }
-                    className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                  />
-                </div>
-              </div>
+              {userType === "subscriber" && (
+                <>
+                  <div>
+                    <label
+                      htmlFor="firstName"
+                      className="block text-sm font-medium text-gray-700"
+                    >
+                      First name
+                    </label>
+                    <div className="mt-1">
+                      <input
+                        id="firstName"
+                        name="firstName"
+                        type="text"
+                        autoComplete="given-name"
+                        required
+                        value={formData.firstName}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            firstName: e.target.value,
+                          })
+                        }
+                        className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                      />
+                    </div>
+                  </div>
 
-              <div>
-                <label
-                  htmlFor="lastName"
-                  className="block text-sm font-medium text-gray-700"
-                >
-                  Last name
-                </label>
-                <div className="mt-1">
-                  <input
-                    id="lastName"
-                    name="lastName"
-                    type="text"
-                    autoComplete="family-name"
-                    required
-                    value={formData.lastName}
-                    onChange={(e) =>
-                      setFormData({ ...formData, lastName: e.target.value })
-                    }
-                    className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                  />
-                </div>
-              </div>
+                  <div>
+                    <label
+                      htmlFor="lastName"
+                      className="block text-sm font-medium text-gray-700"
+                    >
+                      Last name
+                    </label>
+                    <div className="mt-1">
+                      <input
+                        id="lastName"
+                        name="lastName"
+                        type="text"
+                        autoComplete="family-name"
+                        required
+                        value={formData.lastName}
+                        onChange={(e) =>
+                          setFormData({ ...formData, lastName: e.target.value })
+                        }
+                        className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                      />
+                    </div>
+                  </div>
+                </>
+              )}
             </div>
 
+            {userType === "publisher" && (
+              <div>
+                <label
+                  htmlFor="organization"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Organization name
+                </label>
+                <div className="mt-1">
+                  <input
+                    id="organization"
+                    name="organization"
+                    type="text"
+                    required
+                    value={formData.nom}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        nom: e.target.value,
+                      })
+                    }
+                    className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                  />
+                </div>
+              </div>
+            )}
             <div>
               <label
                 htmlFor="email"
@@ -139,53 +221,6 @@ export default function Register() {
               </div>
             </div>
 
-            {userType === "publisher" && (
-              <div>
-                <label
-                  htmlFor="organization"
-                  className="block text-sm font-medium text-gray-700"
-                >
-                  Organization name
-                </label>
-                <div className="mt-1">
-                  <input
-                    id="organization"
-                    name="organization"
-                    type="text"
-                    required
-                    value={formData.organization}
-                    onChange={(e) =>
-                      setFormData({ ...formData, organization: e.target.value })
-                    }
-                    className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                  />
-                </div>
-              </div>
-            )}
-
-            <div>
-              <label
-                htmlFor="phone"
-                className="block text-sm font-medium text-gray-700"
-              >
-                Phone number
-              </label>
-              <div className="mt-1">
-                <input
-                  id="phone"
-                  name="phone"
-                  type="tel"
-                  autoComplete="tel"
-                  required
-                  value={formData.phone}
-                  onChange={(e) =>
-                    setFormData({ ...formData, phone: e.target.value })
-                  }
-                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                />
-              </div>
-            </div>
-
             <div>
               <label
                 htmlFor="password"
@@ -203,32 +238,6 @@ export default function Register() {
                   value={formData.password}
                   onChange={(e) =>
                     setFormData({ ...formData, password: e.target.value })
-                  }
-                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                />
-              </div>
-            </div>
-
-            <div>
-              <label
-                htmlFor="confirmPassword"
-                className="block text-sm font-medium text-gray-700"
-              >
-                Confirm password
-              </label>
-              <div className="mt-1">
-                <input
-                  id="confirmPassword"
-                  name="confirmPassword"
-                  type="password"
-                  autoComplete="new-password"
-                  required
-                  value={formData.confirmPassword}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      confirmPassword: e.target.value,
-                    })
                   }
                   className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                 />

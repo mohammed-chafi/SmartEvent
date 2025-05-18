@@ -16,19 +16,35 @@ namespace SmartEvent.API.Controllers
         }
 
 
-        [HttpPost("register")]
-        public async Task<IActionResult> RegisterAsync([FromBody] RegisterModel registerModel)
+        [HttpPost("register/user")]
+        public async Task<IActionResult> UserRegisterAsync([FromBody] UserRegisterModel userRegisterModel)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var result = await _authService.RegisterAsync(registerModel);
+            var result = await _authService.UserRegisterAsync(userRegisterModel);
 
             if (result.IsAuthenticated == false)
                 return BadRequest(result.Message);
 
             return Ok(result);
         }
+
+        [HttpPost("register/organisation")]
+        public async Task<IActionResult> OrganisationRegisterAsync([FromBody] OrganisationRegisterModel organisationRegisterModel)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var result = await _authService.OrganisationRegisterAsync(organisationRegisterModel);
+
+            if (result.IsAuthenticated == false)
+                return BadRequest(result.Message);
+
+            return Ok(result);
+        }
+
+
 
         [HttpPost("login")]
         public async Task<IActionResult> GetTokenAsync([FromBody] TokenRequestModel model)
