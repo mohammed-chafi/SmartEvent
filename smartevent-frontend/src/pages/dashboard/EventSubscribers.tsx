@@ -6,7 +6,6 @@ import { Subscriber } from "../../Interfaces/Subscriber";
 
 export default function EventSubscribers() {
   const { eventId } = useParams();
-  const [searchTerm, setSearchTerm] = useState("");
   const [event, setEvent] = useState<Event>(Object);
   const [subscribers, setSubscribers] = useState<Subscriber[]>([]);
 

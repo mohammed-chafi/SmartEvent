@@ -22,6 +22,10 @@ export default function NavBar() {
     return location.pathname === path;
   };
 
+  const deconnexion = () => {
+    localStorage.clear();
+  };
+
   return (
     <nav className="bg-white/80 backdrop-blur-md border-b border-gray-100 fixed w-full z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -112,6 +116,7 @@ export default function NavBar() {
               >
                 My events
               </Link>
+              <button>Deconnexion</button>
             </div>
           ) : (
             <div className="hidden md:flex items-center space-x-4">
@@ -125,6 +130,13 @@ export default function NavBar() {
               >
                 Dashboard
               </Link>
+              <button
+                onClick={() => deconnexion()}
+                type="submit"
+                className="inline-flex items-center px-4 py-2 border border-transparent text-base font-medium rounded-xl text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 cursor-pointer"
+              >
+                Deconnexion
+              </button>
             </div>
           )}
 
